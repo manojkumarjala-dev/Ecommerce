@@ -1,0 +1,62 @@
+# Java build
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/pom.xml.next
+**/release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+*.ipr
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Eclipse (if used at all)
+.project
+.classpath
+.c9/
+.settings/
+
+# OS junk
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Spring Boot dev tools
+.spring-boot-devtools.properties
+
+# VSCode (if someone uses it)
+.vscode/
+
+# Test output
+test-output/
+
+# Coverage reports
+jacoco.exec
+coverage-reports/
+
+# Node modules (if frontend inside monorepo)
+node_modules/
+dist/
+mysql
