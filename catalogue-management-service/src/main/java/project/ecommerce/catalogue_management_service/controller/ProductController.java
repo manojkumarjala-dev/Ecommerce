@@ -1,8 +1,10 @@
 package project.ecommerce.catalogue_management_service.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import project.ecommerce.catalogue_management_service.dto.ProductDto;
+import project.ecommerce.catalogue_management_service.dto.ProductRequestDTO;
+import project.ecommerce.catalogue_management_service.dto.ProductResponseDTO;
 import project.ecommerce.catalogue_management_service.service.ProductService;
 import java.util.List;
 
@@ -14,17 +16,17 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public List<ProductDto> getAllProducts() {
+    public List<ProductResponseDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public ProductDto getProductById(@PathVariable Long id) {
+    public ProductResponseDTO getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
     @PostMapping
-    public ProductDto createProduct(@RequestBody ProductDto productDto) {
+    public ProductResponseDTO createProduct(@Valid @RequestBody ProductRequestDTO productDto) {
         return productService.createProduct(productDto);
     }
 

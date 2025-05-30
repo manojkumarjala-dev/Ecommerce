@@ -20,8 +20,6 @@ public class Product {
     private String mainCategory;
     private String subCategory;
     private String image;
-    private double ratings;
-    private int noOfRatings;
     private int actualPrice;
 
     // Constructors, getters, setters
