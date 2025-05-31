@@ -2,6 +2,9 @@ package project.ecommerce.catalogue_management_service.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.ecommerce.catalogue_management_service.dto.ProductRequestDTO;
@@ -17,9 +20,37 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
-      List<ProductResponseDTO> allProducts =  productService.getAllProducts();
-        return ResponseEntity.ok(allProducts);
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "false") boolean sortByPrice
+    ) {
+        Pageable pageable = sortByPrice
+                ? PageRequest.of(page, size, Sort.by("actualPrice").ascending())
+                : PageRequest.of(page, size);
+
+        List<ProductResponseDTO> products = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/by-price")
+    public ResponseEntity<List<ProductResponseDTO>> getProductsInPriceRange(
+            @RequestParam int minPrice,
+            @RequestParam int maxPrice,
+            @RequestParam(defaultValue = "false") boolean sortByPriceDesc,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = sortByPriceDesc
+                ? PageRequest.of(page, size, Sort.by("actualPrice").descending())
+                : PageRequest.of(page, size, Sort.by("actualPrice").ascending());
+        List<ProductResponseDTO> products = productService.getProductsInPriceRange(pageable, minPrice, maxPrice);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "OK";
     }
 
     @GetMapping("/{id}")
