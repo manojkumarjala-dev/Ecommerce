@@ -29,22 +29,13 @@ public class ProductController {
 
         Page<ProductResponseDTO> products;
 
-        if (filter.getKeyword() != null && !filter.getKeyword().isBlank()) {
-            products = productService.searchByKeywordAndFilters(
-                    filter.getKeyword(),
-                    filter.getMainCategory(),
-                    filter.getMinPrice(),
-                    filter.getMaxPrice(),
-                    pageable
-            );
-        } else {
             products = productService.getFilteredProducts(
                     filter.getMainCategory(),
                     filter.getMinPrice(),
                     filter.getMaxPrice(),
                     pageable
             );
-        }
+
 
         return ResponseEntity.ok(products);
     }

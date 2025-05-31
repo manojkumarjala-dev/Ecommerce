@@ -61,12 +61,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponseDTO> searchByKeywordAndFilters(String keyword, String mainCategory, Integer minPrice, Integer maxPrice, Pageable pageable) {
-        Page<Product> page = productRepository.searchByKeywordAndFilters(keyword, mainCategory, minPrice, maxPrice, pageable);
-        return page.map(this::mapToDto);
-    }
-
-    @Override
     public List<ProductResponseDTO> getAllProducts(Pageable pageable) {
         Page<Product> page = productRepository.findAll(pageable);
         return new ArrayList<>(page.map(this::mapToDto)
