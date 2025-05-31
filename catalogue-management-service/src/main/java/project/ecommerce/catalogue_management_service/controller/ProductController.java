@@ -26,12 +26,16 @@ public class ProductController {
         Pageable pageable = filter.isSortByPrice()
                 ? PageRequest.of(filter.getPage(), filter.getSize(), Sort.by("actualPrice").ascending())
                 : PageRequest.of(filter.getPage(), filter.getSize());
-        Page<ProductResponseDTO> products = productService.getFilteredProducts(
-                filter.getMainCategory(),
-                filter.getMinPrice(),
-                filter.getMaxPrice(),
-                pageable
-        );
+
+        Page<ProductResponseDTO> products;
+
+            products = productService.getFilteredProducts(
+                    filter.getMainCategory(),
+                    filter.getMinPrice(),
+                    filter.getMaxPrice(),
+                    pageable
+            );
+
 
         return ResponseEntity.ok(products);
     }

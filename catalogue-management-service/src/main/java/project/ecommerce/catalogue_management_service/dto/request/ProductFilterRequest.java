@@ -12,4 +12,5 @@ public class ProductFilterRequest {
     private String mainCategory;
     private Integer minPrice;
     private Integer maxPrice;
+    private String keyword;
 }

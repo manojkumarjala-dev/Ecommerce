@@ -24,5 +24,25 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("maxPrice") Integer maxPrice,
             Pageable pageable
     );
+
+    @Query("""
+    SELECT p FROM Product p
+    WHERE (
+        LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(p.mainCategory) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(p.subCategory) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    )
+    AND (:mainCategory IS NULL OR p.mainCategory = :mainCategory)
+    AND (:minPrice IS NULL OR p.actualPrice >= :minPrice)
+    AND (:maxPrice IS NULL OR p.actualPrice <= :maxPrice)
+""")
+    Page<Product> searchByKeywordAndFilters(
+            @Param("keyword") String keyword,
+            @Param("mainCategory") String mainCategory,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice,
+            Pageable pageable
+    );
+
 }
 
