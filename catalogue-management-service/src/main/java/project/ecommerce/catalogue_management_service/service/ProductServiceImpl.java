@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.ecommerce.catalogue_management_service.dto.ProductRequestDTO;
-import project.ecommerce.catalogue_management_service.dto.ProductResponseDTO;
+import project.ecommerce.catalogue_management_service.dto.request.ProductRequestDTO;
+import project.ecommerce.catalogue_management_service.dto.response.ProductResponseDTO;
 import project.ecommerce.catalogue_management_service.exception.ProductCreationFailedException;
 import project.ecommerce.catalogue_management_service.exception.ProductNotFoundException;
 import project.ecommerce.catalogue_management_service.model.Product;
@@ -14,7 +14,6 @@ import project.ecommerce.catalogue_management_service.repository.ProductReposito
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -55,6 +54,11 @@ public class ProductServiceImpl implements ProductService {
         return page.map(this::mapToDto).getContent();
     }
 
+    @Override
+    public Page<ProductResponseDTO> getFilteredProducts(String mainCategory, Integer minPrice, Integer maxPrice, Pageable pageable) {
+        Page<Product> page = productRepository.findFilteredProducts(mainCategory, minPrice, maxPrice, pageable);
+        return page.map(this::mapToDto);
+    }
 
     @Override
     public List<ProductResponseDTO> getAllProducts(Pageable pageable) {

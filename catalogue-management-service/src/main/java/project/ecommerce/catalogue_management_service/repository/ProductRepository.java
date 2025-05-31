@@ -14,5 +14,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                    @Param("maxPrice") int maxPrice,
                                    Pageable pageable);
 
+    @Query("SELECT p FROM Product p " +
+            "WHERE (:mainCategory IS NULL OR p.mainCategory = :mainCategory) " +
+            "AND (:minPrice IS NULL OR p.actualPrice >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.actualPrice <= :maxPrice)")
+    Page<Product> findFilteredProducts(
+            @Param("mainCategory") String mainCategory,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice,
+            Pageable pageable
+    );
 }
 

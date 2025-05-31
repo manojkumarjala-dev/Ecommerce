@@ -2,13 +2,15 @@ package project.ecommerce.catalogue_management_service.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.ecommerce.catalogue_management_service.dto.ProductRequestDTO;
-import project.ecommerce.catalogue_management_service.dto.ProductResponseDTO;
+import project.ecommerce.catalogue_management_service.dto.request.ProductRequestDTO;
+import project.ecommerce.catalogue_management_service.dto.response.ProductResponseDTO;
+import project.ecommerce.catalogue_management_service.dto.request.ProductFilterRequest;
 import project.ecommerce.catalogue_management_service.service.ProductService;
 import java.util.List;
 
@@ -20,16 +22,17 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "false") boolean sortByPrice
-    ) {
-        Pageable pageable = sortByPrice
-                ? PageRequest.of(page, size, Sort.by("actualPrice").ascending())
-                : PageRequest.of(page, size);
+    public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(@ModelAttribute ProductFilterRequest filter) {
+        Pageable pageable = filter.isSortByPrice()
+                ? PageRequest.of(filter.getPage(), filter.getSize(), Sort.by("actualPrice").ascending())
+                : PageRequest.of(filter.getPage(), filter.getSize());
+        Page<ProductResponseDTO> products = productService.getFilteredProducts(
+                filter.getMainCategory(),
+                filter.getMinPrice(),
+                filter.getMaxPrice(),
+                pageable
+        );
 
-        List<ProductResponseDTO> products = productService.getAllProducts(pageable);
         return ResponseEntity.ok(products);
     }
 

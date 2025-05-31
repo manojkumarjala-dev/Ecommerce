@@ -1,4 +1,4 @@
-package project.ecommerce.catalogue_management_service.dto;
+package project.ecommerce.catalogue_management_service.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

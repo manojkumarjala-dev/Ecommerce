@@ -1,7 +1,6 @@
-package project.ecommerce.catalogue_management_service.dto;
+package project.ecommerce.catalogue_management_service.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
