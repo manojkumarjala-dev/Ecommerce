@@ -13,6 +13,13 @@ public interface ProductService {
             Integer maxPrice,
             Pageable pageable
     );
+    Page<ProductResponseDTO> searchByKeywordAndFilters(
+            String keyword,
+            String mainCategory,
+            Integer minPrice,
+            Integer maxPrice,
+            Pageable pageable
+    );
     List<ProductResponseDTO> getAllProducts(Pageable pageable);
     ProductResponseDTO getProductById(Long id);
     ProductResponseDTO createProduct(ProductRequestDTO productRequestDTODto);
