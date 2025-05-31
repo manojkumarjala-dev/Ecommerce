@@ -4,21 +4,23 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long sku;
 
     private String name;
     private String mainCategory;
     private String subCategory;
     private String image;
-    private double ratings;
-    private int noOfRatings;
-    private double actualPrice;
+    private int actualPrice;
 
     // Constructors, getters, setters
 }

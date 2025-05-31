@@ -1,55 +1,95 @@
 package project.ecommerce.catalogue_management_service.service;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.ecommerce.catalogue_management_service.dto.ProductDto;
+import project.ecommerce.catalogue_management_service.dto.request.ProductRequestDTO;
+import project.ecommerce.catalogue_management_service.dto.response.ProductResponseDTO;
+import project.ecommerce.catalogue_management_service.exception.ProductCreationFailedException;
+import project.ecommerce.catalogue_management_service.exception.ProductNotFoundException;
 import project.ecommerce.catalogue_management_service.model.Product;
 import project.ecommerce.catalogue_management_service.repository.ProductRepository;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+    private final ModelMapper modelMapper;
 
-    // Map Product <-> ProductDto (manual or with ModelMapper/MapStruct)
-    private ProductDto mapToDto(Product product) {
-        ProductDto productDto = new ProductDto();
-        // set fields
-        return productDto;
+    @Autowired
+    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMapper) {
+        this.productRepository = productRepository;
+        this.modelMapper = modelMapper;
     }
 
-    private Product mapToEntity(ProductDto dto) {
+    private ProductResponseDTO mapToDto(Product product) {
+        ProductResponseDTO dto = new ProductResponseDTO();
+        dto.setSku(product.getSku());
+        dto.setName(product.getName());
+        dto.setMainCategory(product.getMainCategory());
+        dto.setSubCategory(product.getSubCategory());
+        dto.setImage(product.getImage());
+        dto.setActualPrice(product.getActualPrice());
+        return dto;
+    }
+
+    private Product mapToEntity(ProductRequestDTO dto) {
         Product product = new Product();
-        // set fields
+        product.setName(dto.getName());
+        product.setMainCategory(dto.getMainCategory());
+        product.setSubCategory(dto.getSubCategory());
+        product.setImage(dto.getImage());
+        product.setActualPrice(dto.getActualPrice());
         return product;
     }
 
     @Override
-    public List<ProductDto> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+    public List<ProductResponseDTO> getProductsInPriceRange(Pageable pageable, int minPrice, int maxPrice) {
+        Page<Product> page = productRepository.findByPriceRange(minPrice, maxPrice, pageable);
+        return page.map(this::mapToDto).getContent();
     }
 
     @Override
-    public ProductDto getProductById(Long id) {
+    public Page<ProductResponseDTO> getFilteredProducts(String mainCategory, Integer minPrice, Integer maxPrice, Pageable pageable) {
+        Page<Product> page = productRepository.findFilteredProducts(mainCategory, minPrice, maxPrice, pageable);
+        return page.map(this::mapToDto);
+    }
+
+    @Override
+    public List<ProductResponseDTO> getAllProducts(Pageable pageable) {
+        Page<Product> page = productRepository.findAll(pageable);
+        return new ArrayList<>(page.map(this::mapToDto)
+                .getContent());
+    }
+
+    @Override
+    public ProductResponseDTO getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product with ID " + id + " not found"));
         return mapToDto(product);
     }
 
     @Override
-    public ProductDto createProduct(ProductDto productDto) {
-        Product product = mapToEntity(productDto);
-        Product saved = productRepository.save(product);
-        return mapToDto(saved);
+    public ProductResponseDTO createProduct(ProductRequestDTO dto) {
+        try {
+            Product product = mapToEntity(dto);
+            Product saved = productRepository.save(product);
+            return mapToDto(saved);
+        } catch (Exception e) {
+            throw new ProductCreationFailedException("Failed to create product: " + e.getMessage());
+        }
     }
 
     @Override
     public void deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new ProductNotFoundException("Cannot delete — product with ID " + id + " not found");
+        }
         productRepository.deleteById(id);
     }
 }
